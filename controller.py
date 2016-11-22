@@ -1,8 +1,8 @@
-from model import *
+from models import game
 
 	# def play(self, letter, column, row):
 
-g = Game(2)
+g = game.Game(2)
 g.draw(1)
 g.draw(2)
 
