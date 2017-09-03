@@ -1,6 +1,6 @@
 import random
-import tile
-import values
+import models.tile as tile
+import models.values as values
 
 tile_amounts = values.tile_amounts
 
@@ -10,7 +10,7 @@ class TileBag:
 
 	def __init__(self):
 		for letter in tile_amounts.keys():
-			for i in xrange(tile_amounts[letter]):
+			for i in range(0, tile_amounts[letter]):
 				self.tiles.append(tile.Tile(letter))
 
 	def draw(self):

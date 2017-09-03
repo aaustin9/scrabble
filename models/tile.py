@@ -1,4 +1,4 @@
-import values
+import models.values as values
 
 class Tile:
 	letter = ''

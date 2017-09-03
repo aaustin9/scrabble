@@ -1,5 +1,7 @@
+
+
 class Square:
-	bonus = ""
+	bonus = None
 	row = 0
 	column = ''
 	coordinates = ""
@@ -10,3 +12,7 @@ class Square:
 		self.row = row
 		self.column = column
 		self.coordinates = column + str(row)
+
+	def place_tile(self, tile):
+		self.current_tile = tile
+
