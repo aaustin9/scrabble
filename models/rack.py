@@ -9,13 +9,13 @@ class Rack:
 		self.id_num = number
 		self.tiles = []
 
-	def print_rack(self):
+	def toString(self):
 		output = ""
 		for tile in self.tiles:
 			output += (tile.letter if tile.letter != "blank" else "_")
-		print(output)
+		return output
 
-	def play_tile(self, letter):
+	def playTile(self, letter):
 		for tile in range(0, len(self.tiles)):
 			if self.tiles[tile].letter == letter:
 				return self.tiles.pop(tile)

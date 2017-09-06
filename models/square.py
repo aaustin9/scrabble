@@ -13,6 +13,6 @@ class Square:
 		self.column = column
 		self.coordinates = column + str(row)
 
-	def place_tile(self, tile):
+	def placeTile(self, tile):
 		self.current_tile = tile
 

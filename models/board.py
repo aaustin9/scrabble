@@ -26,14 +26,14 @@ class Board:
 				column.append(square.Square(chr(ord('A')+i), j+1, bonus))
 			self.squares.append(column)
 
-	def print_board(self, print_type):
+	def toString(self, string_option):
 		output = ""
 		for i in range(0, self.column_count):
 			for j in range(0, self.row_count):
-				if print_type == self.BONUSES:
+				if string_option == self.BONUSES:
 					bonus = self.squares[j][i].bonus
 					output += (bonus if bonus else "---") + " "
-				elif print_type == self.TILES:
+				elif string_option == self.TILES:
 					tile = self.squares[j][i].current_tile
 					bonus = self.squares[j][i].bonus
 					character_representations = {"DLS": "'", "TLS": "\"", "DWS": "+", "TWS": "#"}
@@ -43,8 +43,8 @@ class Board:
 						output += "- "
 					else:
 						output += character_representations[bonus] + " "
-				elif print_type == self.COORDINATES:
+				elif string_option == self.COORDINATES:
 					coordinates = self.squares[j][i].coordinates
 					output += coordinates + (" " if len(coordinates) == 3 else "  ")
 			output += "\n"
-		print(output)
+		return output
