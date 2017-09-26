@@ -15,7 +15,7 @@ class Rack:
 			output += (tile.letter if tile.letter != "blank" else "_")
 		return output
 
-	def playTile(self, letter):
+	def playLetter(self, letter):
 		for tile in range(0, len(self.tiles)):
 			if self.tiles[tile].letter == letter:
 				return self.tiles.pop(tile)
@@ -24,5 +24,4 @@ class Rack:
 				if self.tiles[tile].letter == "blank":
 					self.tiles[tile].letter = letter
 					return self.tiles.pop(tile)
-		print("Error! Invalid play!")
 		return None

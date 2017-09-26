@@ -11,6 +11,9 @@ class Game:
 	turn_number = 0
 	player_number = 0
 	player_number_max = 0
+	dictionary = []
+
+	perpendicular = {"right":"down", "down":"right"}
 	
 	def __init__(self, players):
 		for i in range(0, players):
@@ -31,28 +34,71 @@ class Game:
 			else:
 				break
 
-	def placeWord(self, player, word, position, direction):
+	def placeWord(self, player, word, position, direction, first_play=False):
 		player = int(player)
 		i = ord(position[0]) - ord('A')
 		j = int(position[1:]) - 1
 		current_position = (i,j)
 		played_tiles = []
+		valid_play = True
+		play_through = False
 		for letter in word:
 			if self.board.squares[i][j].current_tile == None:
-				self.board.squares[i][j].placeTile(self.racks[player].playTile(letter))
+				tile = self.racks[player].playLetter(letter)
+				if not tile:
+					self.failPlay(player, played_tiles)
+					print(1)
+					return None
+				self.board.squares[i][j].placeTile(tile)
 				played_tiles.append((i, j))
+			elif self.board.squares[i][j].current_tile.letter != letter:
+				self.failPlay(player, played_tiles)
+				print(2)
+				return None
+			else:
+				play_through = True
 			if direction == "right":
 				i += 1
 			elif direction == "down":
 				j += 1
+		if first_play:
+			if not self.board.squares[7][7].current_tile:
+				self.failPlay(player, played_tiles)
+				print(3)
+				return None
+		elif not play_through:
+			adjacent = False
+			perp_direction = self.perpendicular[direction]
+			for tile_position in played_tiles:
+				if self.findStart(tile_position, perp_direction) != self.findEnd(tile_position, perp_direction):
+					adjacent = True
+			if not adjacent:
+				self.failPlay(player, played_tiles)
+				print(4)
+				return None
 		return played_tiles
+
+	def failPlay(self, player, placed_tiles):
+		print("Error! Invalid play.")
+		self.returnTiles(player, placed_tiles)
+
+	def returnTiles(self, player, placed_tiles):
+		for tile_position in placed_tiles:
+			i = tile_position[0]
+			j = tile_position[1]
+			tile = self.board.squares[i][j].current_tile
+			if tile.letter.islower():
+				tile.letter = "blank"
+			self.racks[player].tiles.append(tile)
+			self.board.squares[i][j].current_tile = None
 
 	def calculatePlayScore(self, tile_positions, main_direction):
 		start = self.findStart(tile_positions[0], main_direction)
 		end = self.findEnd(tile_positions[0], main_direction)
-		perpendicular = {"right":"down", "down":"right"}
-		perp_direction = perpendicular[main_direction]
+		perp_direction = self.perpendicular[main_direction]
 		play_score = self.calculateWordScore(start, end, tile_positions, main_direction)
+		if(len(tile_positions) == 7):
+			play_score += 50
 		for position in tile_positions:
 			start = self.findStart(position, perp_direction)
 			end = self.findEnd(position, perp_direction)
@@ -119,3 +165,34 @@ class Game:
 			while end_row < 15 and self.board.squares[active_column][end_row+1].current_tile != None:
 				end_row += 1
 			return (active_column, end_row)
+
+	def challenge(self, tile_positions, main_direction):
+		word_start = self.findStart(tile_positions[0], main_direction)
+		word_end = self.findEnd(tile_positions[0], main_direction)
+		word = self.stringTiles(word_start, word_end, main_direction)
+		print("Word is " + word)
+		if word not in self.dictionary[word[0]][len(word)]:
+			return "successful"
+
+		perp_direction = self.perpendicular[main_direction]
+		for position in tile_positions:
+			word_start = self.findStart(position, perp_direction)
+			word_end = self.findEnd(position, perp_direction)
+			if word_start != word_end:
+				word = self.stringTiles(word_start, word_end, perp_direction)
+				print("Word is " + word)
+				if word not in self.dictionary[word[0]][len(word)]:
+					return "successful"
+
+		return "unsuccessful"
+
+	def stringTiles(self, start, end, direction):
+		word = self.board.squares[start[0]][start[1]].current_tile.letter
+		i, j = start
+		while (i, j) != end:
+			if direction == "right":
+				i += 1
+			elif direction == "down":
+				j += 1
+			word += self.board.squares[i][j].current_tile.letter
+		return word.upper()
